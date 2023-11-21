@@ -28,31 +28,31 @@ public class EnemyController : MonoBehaviour
         float distanceTwo = Vector2.Distance(transform.position, players[1].transform.position);
 
         if (distanceOne < distanceTwo)
-            {
-                nearestPlayer = players[0];
-            }
-            else
-            {
-                nearestPlayer = players[1];
-            }
+        {
+            nearestPlayer = players[0];
+        }
+        else
+        {
+            nearestPlayer = players[1];
+        }
 
-            if (nearestPlayer != null)
-            {
-                transform.position = Vector2.MoveTowards(transform.position, nearestPlayer.transform.position, speed * Time.deltaTime);
-            }
-        
+        if (nearestPlayer != null)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, nearestPlayer.transform.position, speed * Time.deltaTime);
+        }
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (PhotonNetwork.IsMasterClient)
+        if (collision.tag == "GoldenRay")
         {
-            if (collision.tag == "GoldenRay")
+            if (PhotonNetwork.IsMasterClient)
             {
                 scoreScript.UpdateScore();
                 view.RPC("SpawnParticle", RpcTarget.All);
+
                 PhotonNetwork.Destroy(this.gameObject);
-                
             }
         }
     }
@@ -60,7 +60,6 @@ public class EnemyController : MonoBehaviour
     [PunRPC]
     void SpawnParticle()
     {
-        print("spawn particles");
         Instantiate(deathFX, transform.position, Quaternion.identity);
     }
 }
